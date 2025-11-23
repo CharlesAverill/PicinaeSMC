@@ -1,0 +1,4 @@
+riscv-unknown-elf-*
+lz4
+liblz4-dev
+xxd
