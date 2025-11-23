@@ -6,14 +6,6 @@
 extern unsigned char bin_src_payload_lz4[];
 extern unsigned int  bin_src_payload_lz4_len;
 
-void *memcpy(void *dst, const void *src, size_t n) {
-    uint8_t *d = dst;
-    const uint8_t *s = src;
-    while (n--)
-        *d++ = *s++;
-    return dst;
-}
-
 // mmap wrapper for RV32 (6-argument syscall)
 void* mmap_exec(int size) {
     register long a0 __asm__("a0") = 0;      // addr
