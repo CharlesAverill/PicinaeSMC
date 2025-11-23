@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include "lz4.h"
 
+// Initially, I compressed with `lz4 -9 $(BIN) $(CMP)`, but this included some 
+// extra frame data that messed with the decryption.
+// This script just produces the compressed data.
 int main(int argc, char **argv) {
     if (argc != 3) {
         fprintf(stderr, "usage: %s in.bin out.lz4\n", argv[0]);

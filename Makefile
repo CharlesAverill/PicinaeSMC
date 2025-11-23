@@ -23,8 +23,6 @@ GCC=$(RV_PREFIX)gcc
 OBJCOPY=$(RV_PREFIX)objcopy
 HOST_GCC=gcc
 
-LZ4=lz4
-
 QEMU=qemu-riscv32
 
 CFLAGS=-Iinclude
@@ -38,7 +36,6 @@ $(INC): $(PAYLOAD) $(LZ4_SRC) $(BUILD)
 	$(OBJCOPY) -O binary $(ELF) $(BIN)
 	$(HOST_GCC) $(CFLAGS) -O2 $(COMPRESS_RAW_SRC) $(LZ4_SRC) -o $(COMPRESS)
 	./$(COMPRESS) $(BIN) $(CMP)
-# 	$(LZ4) -9 $(BIN) $(CMP)
 	xxd -i $(CMP) > $(INC)
 
 loader: $(LOADER)

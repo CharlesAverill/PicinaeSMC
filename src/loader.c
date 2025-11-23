@@ -14,8 +14,6 @@ void *memcpy(void *dst, const void *src, size_t n) {
     return dst;
 }
 
-// int LZ4_decompress_safe(const char*, char*, int, int);
-
 // mmap wrapper for RV32 (6-argument syscall)
 void* mmap_exec(int size) {
     register long a0 __asm__("a0") = 0;      // addr
@@ -34,13 +32,6 @@ void* mmap_exec(int size) {
     return (void*)a0;
 }
 
-static long sys_exit(long x) {
-    register long a0 __asm__("a0") = x;
-    register long a7 __asm__("a7") = 93;
-    __asm__ volatile("ecall" : : "r"(a0), "r"(a7));
-    return 0;
-}
-
 #define LEN 7
 int main() {
     // Create test input array
@@ -53,14 +44,16 @@ int main() {
     // Decompress
     int out = LZ4_decompress_safe((char*)bin_src_payload_lz4, (char*)mem,
                                   bin_src_payload_lz4_len, max_output);
-    if (out < 0)
-        sys_exit(111);
+    if (out < 0) {
+        fprintf(stderr, "Failed to decompress payload (%d)\n", out);
+        return 1;
+    }
 
     // Cast decompressed code to a function pointer
     uint32_t (*sum_fn)(uint32_t*, uint32_t) = mem;
 
     uint32_t result = sum_fn(arr, LEN);
-    printf("%d\n", result);
+    printf("Result: %d\n", result);
     return 0;
 }
 
