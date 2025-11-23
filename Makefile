@@ -1,17 +1,22 @@
-.PHONY: payload loader clean
+.PHONY: payload loader clean all
 
-PAYLOAD=payload.S
-ELF=$(PAYLOAD:.S=.elf)
-BIN=$(PAYLOAD:.S=.bin)
-CMP=$(PAYLOAD:.S=.lz4)
-INC=$(PAYLOAD:.S=.inc)
+all: payload loader run
 
-LOADER_SRC=loader.c
-LOADER=$(LOADER_SRC:.c=)
-LZ4_SRC=lz4.c
+BUILD=bin
+SRC=src
 
-COMPRESS_RAW_SRC=compress_raw.c
-COMPRESS=$(COMPRESS_RAW_SRC:.c=)
+PAYLOAD=$(SRC)/payload.S
+ELF=$(BUILD)/$(PAYLOAD:.S=.elf)
+BIN=$(BUILD)/$(PAYLOAD:.S=.bin)
+CMP=$(BUILD)/$(PAYLOAD:.S=.lz4)
+INC=$(BUILD)/$(PAYLOAD:.S=.inc)
+
+LOADER_SRC=$(SRC)/loader.c
+LOADER=$(BUILD)/$(LOADER_SRC:.c=)
+LZ4_SRC=$(SRC)/lz4.c
+
+COMPRESS_RAW_SRC=$(SRC)/compress_raw.c
+COMPRESS=$(BUILD)/$(COMPRESS_RAW_SRC:.c=)
 
 RV_PREFIX=riscv32-unknown-elf-
 GCC=$(RV_PREFIX)gcc
@@ -22,22 +27,27 @@ LZ4=lz4
 
 QEMU=qemu-riscv32
 
+CFLAGS=-Iinclude
+
+$(BUILD):
+	mkdir -p $(BUILD) $(BUILD)/$(SRC)
+
 payload: $(INC)
-$(INC): $(PAYLOAD) $(LZ4_SRC)
-	$(GCC) -nostdlib -static -Wl,-Ttext=0x0 $(PAYLOAD) -o $(ELF)
+$(INC): $(PAYLOAD) $(LZ4_SRC) $(BUILD)
+	$(GCC) $(CFLAGS) -nostdlib -static -Wl,-Ttext=0x0 $(PAYLOAD) -o $(ELF)
 	$(OBJCOPY) -O binary $(ELF) $(BIN)
-	$(HOST_GCC) -O2 $(COMPRESS_RAW_SRC) $(LZ4_SRC) -o $(COMPRESS)
+	$(HOST_GCC) $(CFLAGS) -O2 $(COMPRESS_RAW_SRC) $(LZ4_SRC) -o $(COMPRESS)
 	./$(COMPRESS) $(BIN) $(CMP)
 # 	$(LZ4) -9 $(BIN) $(CMP)
 	xxd -i $(CMP) > $(INC)
 
-loader: $(INC)
+loader: $(LOADER)
 $(LOADER): $(LOADER_SRC) $(INC)
-	$(GCC) -static -O2 $(LOADER_SRC) $(LZ4_SRC) -x c $(INC) -o $(LOADER)
+	$(GCC) $(CFLAGS) -static -O2 $(LOADER_SRC) $(LZ4_SRC) -x c $(INC) -o $(LOADER)
 
 run: $(LOADER_SRC) $(PAYLOAD) $(LZ4_SRC)
 	$(QEMU) ./$(LOADER)
 
 clean:
-	@rm -rf $(ELF) $(BIN) $(CMP) $(INC) $(LOADER) $(COMPRESS)
+	@rm -rf $(ELF) $(BIN) $(CMP) $(INC) $(LOADER) $(COMPRESS) $(BUILD)
 

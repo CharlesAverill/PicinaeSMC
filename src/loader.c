@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include "lz4.h"
 
-extern unsigned char payload_lz4[];
-extern unsigned int  payload_lz4_len;
+extern unsigned char bin_src_payload_lz4[];
+extern unsigned int  bin_src_payload_lz4_len;
 
 void *memcpy(void *dst, const void *src, size_t n) {
     uint8_t *d = dst;
@@ -51,8 +51,8 @@ int main() {
     void *mem = mmap_exec(max_output);
 
     // Decompress
-    int out = LZ4_decompress_safe((char*)payload_lz4, (char*)mem,
-                                  payload_lz4_len, max_output);
+    int out = LZ4_decompress_safe((char*)bin_src_payload_lz4, (char*)mem,
+                                  bin_src_payload_lz4_len, max_output);
     if (out < 0)
         sys_exit(111);
 
