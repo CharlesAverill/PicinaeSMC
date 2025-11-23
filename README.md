@@ -12,3 +12,11 @@ This repository builds an example of [self-modifying code](https://en.wikipedia.
 - `qemu-riscv32`:
   - [`qemu-system-misc`](https://packages.debian.org/sid/qemu-system-misc)
   - [`qemu-user`](https://packages.debian.org/sid/qemu-user)
+
+## Targets
+
+| Target | Description |
+| --- | --- |
+| `payload` | Compile and compress [payload.S](src/payload.S) |
+| `loader` | Compile [loader.c](src/loader.c) |
+| `run` | Run the loader with `qemu-riscv32` |
