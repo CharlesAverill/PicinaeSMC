@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "src/utils/arguments.c": "C",
+        "*.asm": "z80-macroasm",
+        "lang.h": "c"
+    }
+}

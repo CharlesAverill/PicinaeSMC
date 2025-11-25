@@ -42,7 +42,7 @@ loader: $(LOADER)
 $(LOADER): $(LOADER_SRC) $(INC)
 	$(GCC) $(CFLAGS) -static -O2 $(LOADER_SRC) $(LZ4_SRC) -x c $(INC) -o $(LOADER)
 
-run: $(LOADER_SRC) $(PAYLOAD) $(LZ4_SRC)
+run: $(LOADER)
 	$(QEMU) ./$(LOADER)
 
 clean:
