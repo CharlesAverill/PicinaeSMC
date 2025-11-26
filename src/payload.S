@@ -7,6 +7,7 @@ _start:
     mv t0, a0        # t0 = arr pointer
     mv t1, a1        # t1 = length
     li t2, 0         # sum = 0
+    j loop
 
 loop:
     beq t1, zero, done   # if len == 0 -> done
@@ -18,5 +19,12 @@ loop:
 
 done:
     mv a0, t2            # return sum
+    jalr 0(zero)
     ret
 
+header:
+    .word 0x31415926
+
+callback:
+    li      a0, 42
+    ret

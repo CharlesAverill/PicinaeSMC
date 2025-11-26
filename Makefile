@@ -32,7 +32,7 @@ $(BUILD):
 
 payload: $(INC)
 $(INC): $(PAYLOAD) $(LZ4_SRC) $(BUILD)
-	$(GCC) $(CFLAGS) -nostdlib -static -Wl,-Ttext=0x0 $(PAYLOAD) -o $(ELF)
+	$(GCC) $(CFLAGS) -nostdlib -static -Wl,-Ttext=0x0 $(PAYLOAD) -o $(ELF) -march=rv32im -mabi=ilp32
 	$(OBJCOPY) -O binary $(ELF) $(BIN)
 	$(HOST_GCC) $(CFLAGS) -O2 $(COMPRESS_RAW_SRC) $(LZ4_SRC) -o $(COMPRESS)
 	./$(COMPRESS) $(BIN) $(CMP)

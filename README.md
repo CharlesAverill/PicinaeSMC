@@ -3,7 +3,7 @@
 This repository builds an example of [self-modifying code](https://en.wikipedia.org/wiki/Self-modifying_code) for 32-bit RISC-V.
 [payload.S](src/payload.S) lists a function that takes in an array of integers and returns the sum of those integers.
 [compress_raw.c](src/compress_raw.c) [lz4](https://github.com/lz4/lz4)-compresses the compiled payload binary.
-[loader.c](src/loader.c) decompresses the payload into memory and jumps to the entrypoint.
+[loader.c](src/loader.c) decompresses the payload into memory, modifies one of the jump addresses in the program to simulate dynamic linking, and jumps to the entrypoint.
 
 ## Dependencies
 
